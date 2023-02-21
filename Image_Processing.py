@@ -21,6 +21,16 @@ def find_RGB_from_coordinates(X, Y):
     return pixels[X, Y]
 
 
+def find_all_RGB_values():
+    width, height = pim.size
+    for y in range(height):
+        for x in range(width):
+            r, g, b = pixels[x, y]
+
+            print(x, y, f"#{r:02x}{g:02x}{b:02x}")
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print(find_RGB_from_coordinates(100, 100))
+    # find_all_RGB_values()
