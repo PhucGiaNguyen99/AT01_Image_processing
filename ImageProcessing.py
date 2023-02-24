@@ -42,6 +42,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file_name', type=str, help="File address")
     args = parser.parse_args()
-    pixels_list = list_of_pixels_from_image()
+    pixels_list = list_of_pixels_from_image(args.file_name)
     for p in pixels_list:
         print(p)
