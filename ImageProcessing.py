@@ -1,6 +1,7 @@
 # First step: Given x and y coordinates of a point, return the color of this pixel.
 import argparse
 
+import cv2
 import numpy as np
 from PIL import Image
 
@@ -30,6 +31,39 @@ def list_of_pixels_from_image(image_address):
     return list(im_rgb.getdata())
 
 
+def search_pixel_in_image_using_for_loop(image_address):
+    """
+    Find coordinates of a pixel in the given image.
+    :param image_address: given image to search at
+    :return: x, y coordinates of the pixel in the image
+    """
+    img = cv2.imread(image_address)
+    pixel = img[0, 10]  # row coordinate is 0, column coordinate is 10
+    print("Pixel is ", pixel)
+
+    for iidx, i in enumerate(img):
+        for xidx, x in enumerate(i):
+            if (x == pixel).all():
+                print(f"SUCCESS - [{iidx} {xidx}")
+
+
+def search_pixel_in_image_using_np_array(image_address):
+    img = cv2.imread(image_address)
+    pixel = img[0, 10]  # row coordinate is 0, column coordinate is 10
+    print("Pixel is ", pixel)
+
+    # create an image of just the pixel, having the same size of the image
+    # shape return the width and height of the image
+    # numpy.tile (A, reps) -> construct an array by repeating A the number of times by reps.
+    pixel_tile = np.tile(pixel, (*img.shape[:2], 1))
+
+    # absolute difference of the two images
+    diff = np.sum(np.abs(img - pixel_tile), axis=2)
+
+    # print indices
+    print("\n".join([f"SUCCESS - {idx}" for idx in np.argwhere(diff == 0)]))
+
+
 if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.add_argument('file_name', type=str, help="File address")
@@ -42,6 +76,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file_name', type=str, help="File address")
     args = parser.parse_args()
-    pixels_list = list_of_pixels_from_image(args.file_name)
-    for p in pixels_list:
-        print(p)
+    search_pixel_in_image_using_np_array(args.file_name)
