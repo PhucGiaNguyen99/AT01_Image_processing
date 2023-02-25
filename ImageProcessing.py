@@ -47,9 +47,10 @@ def search_pixel_in_image_using_for_loop(image_address):
                 print(f"SUCCESS - [{iidx} {xidx}")
 
 
+#   NEED TO LOOK UP HOW TO CHECK A PIXEL
 def search_pixel_in_image_using_np_array(image_address):
     img = cv2.imread(image_address)
-    pixel = img[0, 10]  # row coordinate is 0, column coordinate is 10
+    pixel = (115, 59, 0)  # row coordinate is 0, column coordinate is 10
     print("Pixel is ", pixel)
 
     # create an image of just the pixel, having the same size of the image
@@ -64,6 +65,17 @@ def search_pixel_in_image_using_np_array(image_address):
     print("\n".join([f"SUCCESS - {idx}" for idx in np.argwhere(diff == 0)]))
 
 
+def get_height_of_image(image_address):
+    """
+    Get width and height of an image.
+    :param image_address: given image address
+    """
+    img = cv2.imread(image_address)
+    height, width, _ = img.shape
+    print("width: ", width)
+    print("height: ", height)
+
+
 if __name__ == '__main__':
     # parser = argparse.ArgumentParser()
     # parser.add_argument('file_name', type=str, help="File address")
@@ -76,4 +88,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file_name', type=str, help="File address")
     args = parser.parse_args()
-    search_pixel_in_image_using_np_array(args.file_name)
+    search_pixel_in_image_using_for_loop(args.file_name)
+    # get_height_of_image(args.file_name)
