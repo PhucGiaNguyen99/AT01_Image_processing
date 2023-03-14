@@ -1,9 +1,9 @@
 # First step: Given x and y coordinates of a point, return the color of this pixel.
 import argparse
-
-import cv2
+import cv2 as cv
 import numpy as np
 from PIL import Image
+from matplotlib import pyplot as plt
 
 
 def find_RGB_from_coordinates(image_address, x_coordinate, y_coordinate):
@@ -37,7 +37,7 @@ def search_pixel_in_image_using_for_loop(image_address):
     :param image_address: given image to search at
     :return: x, y coordinates of the pixel in the image
     """
-    img = cv2.imread(image_address)
+    img = cv.imread(image_address)
     pixel = img[0, 10]  # row coordinate is 0, column coordinate is 10
     print("Pixel is ", pixel)
 
@@ -54,7 +54,7 @@ def search_pixel_in_image_using_np_array(image_address):
     :param image_address:
     :return:
     """
-    img = cv2.imread(image_address)
+    img = cv.imread(image_address)
     pixel = (0, 0, 0)  # row coordinate is 0, column coordinate is 0
     print("Pixel is ", pixel)
 
@@ -76,10 +76,11 @@ def search_pixel_in_image_using_np_array(image_address):
     # print("\n".join([f"SUCCESS - {idx}" for idx in np.argwhere(diff == 0)]))
 
 
-def find_pattern_in_image(pattern_image, input_image):
+def template_matching(pattern_image, input_image):
+    # open two images paths
     matching_pattern_coords = []
-    pattern_img = cv2.imread(pattern_image)
-    input_img = cv2.imread(input_image)
+    pattern_img = cv.imread(pattern_image)
+    input_img = cv.imread(input_image)
     # get width and height of pattern image and input image
     pattern_img_width, pattern_img_height = pattern_img.shape[0], pattern_img.shape[1]
 
@@ -132,7 +133,7 @@ def find_pixel_coordinates_in_image(image_path):
     :return: coords of all matching points
     """
     # img = Image.open(image_path, mode='r', formats=None)
-    img = cv2.imread(image_path)
+    img = cv.imread(image_path)
     pixel = (0, 0, 0)
     indices = np.where(np.all(img == pixel, axis=-1))
 
@@ -167,10 +168,38 @@ def get_width_of_image(img_path) -> int:
     return img.width
 
 
+def template_matching_using_opencv(image, template):
+    matching_list = []
+    img = cv.imread(image, cv.IMREAD_GRAYSCALE)
+    assert img is not None, "file could not be read, check with os.path.exists()"
+    img2 = img.copy()
+    template = cv.imread(template, cv.IMREAD_GRAYSCALE)
+    assert template is not None, "file could not be read, check with os.path.exists()"
+    w, h = template.shape[::-1]
+
+
+    method = eval('cv.TM_SQDIFF')
+
+    # Apply template matching
+    res = cv.matchTemplate(img2, template, method)
+    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+
+    top_left = min_loc
+
+    matching_list.append(top_left)
+    return matching_list
+
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('pattern_image_path', type=str, help="Pattern image path")
-    parser.add_argument('input_image_path', type=str, help="Input image path")
+    parser.add_argument('image', type=str, help="Image path")
+    parser.add_argument('template', type=str, help="Template path")
+    # parser.add_argument('pattern_image_path', type=str, help="Pattern image path")
+    # parser.add_argument('input_image_path', type=str, help="Input image path")
     args = parser.parse_args()
-    find_pattern_in_image(args.pattern_image_path, args.input_image_path)
+    # template_matching_2(args.o,arg., args.input_image_path)
+    print(template_matching_using_opencv(args.image, args.template))
+
 # search_pixel_in_image_using_np_array(args.pattern_image_path, args.input_image_path)
