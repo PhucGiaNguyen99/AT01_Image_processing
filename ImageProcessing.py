@@ -1,5 +1,7 @@
 # First step: Given x and y coordinates of a point, return the color of this pixel.
 import argparse
+
+import cv2
 import cv2 as cv
 import numpy as np
 from PIL import Image
@@ -177,7 +179,6 @@ def template_matching_using_opencv(image, template):
     assert template is not None, "file could not be read, check with os.path.exists()"
     w, h = template.shape[::-1]
 
-
     method = eval('cv.TM_SQDIFF')
 
     # Apply template matching
@@ -189,6 +190,19 @@ def template_matching_using_opencv(image, template):
     matching_list.append(top_left)
     return matching_list
 
+
+def object_detection(image, template):
+    matching_points = []
+    img_rgb = cv.imread(image)  # read image
+    img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
+    template = cv.imread(template, cv.IMREAD_GRAYSCALE)
+    w, h = template.shape[::-1]  # get the width and height of template
+    res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
+    threshold = 0.8  # assume the threshold to be 0.8
+    loc = np.where(res >= threshold)
+    for pt in zip(*loc[::-1]):
+        matching_points.append((pt[0] + w, pt[1] + h))
+    return matching_points
 
 
 
